@@ -15,6 +15,8 @@ app.use('/auth', auth);
 
 app.listen(3000);
 
+//he[f kj[
+
 // //пишем новый роутер
 // //auth/sign-in?email=test@test.com&password=123123
 //   //- если эмеил и пароль верны, пользователю в массив
