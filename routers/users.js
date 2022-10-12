@@ -32,14 +32,13 @@ router.post('/', function (req, res) {
 });
 
 router.get('/:authorID/rating', function (req, res) {
-    let y = 0;
-    let o = 0;
     let averageRating;
+    let allRatings = [];
     for (let i = 0; i < books.length; i++) {
         if (req.params.authorID == books[i].authorID) {
-            o++;
-            y += Number(books[i].rating);
-            averageRating = y / o;
+            allRatings.push(books[i].rating);
+            let sum = allRatings.reduce((acc, number) => acc + number, 0);
+            averageRating = sum/allRatings.length;
         }
     }
     res.send({ rating: averageRating });

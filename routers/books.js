@@ -12,23 +12,19 @@ router.get('/', function (req, res) {
 });
 
 router.post('/', function (req, res) {
-    for (let i = 0; i < users.length; i++) {
-        if (req.header('authorization') == users[i].token) {
-            if (req.query.rating > 10 || req.query.rating < 0) {
-                res.send('не подходящий rating');
-                return;
-            }
-            let book = {
-                title: req.query.title,
-                ID: randomInteger(0, 10000),
-                rating: req.query.rating,
-                authorID: users[i].ID
-            }
-
-            books.push(book);
-            res.send(book);
-        }
+    if (req.query.rating > 10 || req.query.rating < 0) {
+        res.send('не подходящий rating');
+        return;
     }
+    let book = {
+        title: req.query.title,
+        ID: randomInteger(0, 10000),
+        rating: Number(req.query.rating),
+        authorID: req.user.ID
+    }
+
+    books.push(book);
+    res.send(book);
 });
 
 router.delete('/', function (req, res) {
