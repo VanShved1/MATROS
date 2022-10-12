@@ -2,27 +2,38 @@ const express = require('express');
 const router = express.Router();
 const randomInteger = require('../utils/randomInteger');
 const isAuthorized = require('../middleware/IsAuthorized');
+const users = require('../database/users');
+const books = require('../database/books');
 
 router.use(isAuthorized);
-
-let books = [];
 
 router.get('/', function (req, res) {
     res.send(books);
 });
 
 router.post('/', function (req, res) {
-    let book = {
-        title: req.query.title,
-        ID: randomInteger(0,10000)
+    for (let i = 0; i < users.length; i++) {
+        if (req.header('authorization') == users[i].token) {
+            if (req.query.rating > 10 || req.query.rating < 0) {
+                res.send('не подходящий rating');
+                return;
+            }
+            let book = {
+                title: req.query.title,
+                ID: randomInteger(0, 10000),
+                rating: req.query.rating,
+                authorID: users[i].ID
+            }
+
+            books.push(book);
+            res.send(book);
+        }
     }
-    books.push(book);
-    res.send(book);
 });
 
 router.delete('/', function (req, res) {
-    for(let i = 0; i < books.length; i++) {
-        if(books[i].ID == req.query.ID) {
+    for (let i = 0; i < books.length; i++) {
+        if (books[i].ID == req.query.ID) {
             books.splice(i, 1);
         }
     }
@@ -30,8 +41,8 @@ router.delete('/', function (req, res) {
 });
 
 router.patch('/', function (req, res) {
-    for(let i = 0; i < books.length; i++) {
-        if(req.query.ID == books[i].ID) {
+    for (let i = 0; i < books.length; i++) {
+        if (req.query.ID == books[i].ID) {
             books[i].title = req.query.title;
         }
     }
